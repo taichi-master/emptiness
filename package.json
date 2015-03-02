@@ -1,0 +1,23 @@
+{
+  "name": "Emptiness",
+  "version": "0.1.0",
+  "description": "Entity level data modeling.",
+  "main": "index.js",
+  "scripts": {
+    "test": "make testall"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://taichi-master@github.com/emptiness.git"
+  },
+  "keywords": [
+    "data",
+    "model",
+    "modeling"
+  ],
+  "author": "Kei Sing Wong",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^2.1.0"
+  }
+}
