@@ -1,9 +1,9 @@
 var assert = require('assert'),
-	boolClass = require('../factory/boolean.js')(),
+	boolClass = require('../factory/bool.js')(),
 	dupClass = require('../factory/dup.js')(boolClass),
 	bool = boolClass.create.bind(boolClass);
 
-exports['boolean'] = {
+exports['bool'] = {
 	before: function() {
 		assert.throws(function () {
 				new boolClass();
@@ -108,13 +108,13 @@ exports['boolean'] = {
 		var obj = bool(true);
 		var newObj = obj.dup();
 		assert.notStrictEqual(obj, newObj);
-		assert.strictEqual(obj.getClass(), newObj.getClass());
+		assert.strictEqual(obj.class_, newObj.class_);
 		assert.strictEqual(obj.value, newObj.value);
 		assert.strictEqual(newObj.value, true);
-		assert.strictEqual(obj.getClass().name, 'Dup');
-		assert.strictEqual(obj.getClass(), newObj.getClass());
-		assert.strictEqual(obj.getClass().super_.name, 'Bool');
-		assert.strictEqual(obj.getClass().super_.super_.name, 'Entity');
+		assert.strictEqual(obj.class_.name, 'dup');
+		assert.strictEqual(obj.class_, newObj.class_);
+		assert.strictEqual(obj.class_.super_.name, 'bool');
+		assert.strictEqual(obj.class_.super_.super_.name, 'entity');
 	},
 };
 

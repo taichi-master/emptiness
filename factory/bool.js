@@ -8,15 +8,28 @@ function convert (value) {
 	if (typeof value === 'number')
 		return Boolean(value);
 	if (typeof value === 'string') {
-		if (value.toLowerCase().indexOf('t') >= 0)
-			return true;
-		if (value.toLowerCase().indexOf('f') >= 0)
-			return false;
+		var val = value.toLowerCase();
+		switch (val) {
+			case 'true':
+			case '.true.':
+			case '.t.':
+			case 't':
+				return true;
+
+			case 'false':
+			case '.false.':
+			case '.f.':
+			case 'f':
+				return false;
+
+			default:
+				return null;
+		}
 	}
 	return null;
 }
 
-var className = 'Bool';
+var className = 'bool';
 
 var nature = {
 	attr: {
@@ -27,7 +40,7 @@ var nature = {
 			return null;
 		},
 		validate: function validate (value, attr) {
-			if (!this.getClassOf(className).super_.validate(value, attr))
+			if (!this.classOf(className).super_.validate(value, attr))
 				return false;
 
 			if (typeof value === 'boolean')
@@ -42,7 +55,7 @@ var nature = {
 			return false;
 		},
 		parse: function parse (str, attr) {
-			return this.getClassOf(className).super_.parse(convert(str), attr);
+			return this.classOf(className).super_.parse(convert(str), attr);
 		},
 		stringify: function stringify (value, attr) {
 			return value === null ? 'null' : value.toString();
@@ -50,7 +63,7 @@ var nature = {
 	}
 };
 
-exports = module.exports = function booleanClassFactory (clsObj, attr) {
+exports = module.exports = function boolClassFactory (clsObj, attr) {
 	var _this = clsObj ? clsObj : (exports.entityClass ? exports.entityClass : entityFactory()),
 		class_ = _this.has(nature);
 	if (attr)
