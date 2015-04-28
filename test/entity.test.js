@@ -27,8 +27,8 @@ exports['entity'] = {
 			obj = en(value, attr);
 		assert.strictEqual(obj.value, value);
 		assert.strictEqual(obj.attr(), attr);
-		assert.strictEqual(obj.getClass().root, obj.getClass());
-		assert.strictEqual(obj.getClass().super_, null);
+		assert.strictEqual(obj.class_.root, obj.class_);
+		assert.strictEqual(obj.class_.super_, null);
 		assert.strictEqual(obj.value['abc'], 123);
 		assert.strictEqual(obj.attr('def'), 456);
 		assert.strictEqual(obj.attr({name:'entity'}), obj);
@@ -128,7 +128,7 @@ exports['entity'] = {
 		var obj = en({abc:123});
 		var newObj = obj.dup();
 		assert.notStrictEqual(obj, newObj);
-		assert.strictEqual(obj.getClass(), newObj.getClass());
+		assert.strictEqual(obj.class_, newObj.class_);
 		assert.notStrictEqual(obj.value, newObj.value);
 		assert.strictEqual(obj.value['abc'], newObj.value['abc']);
 		newObj.value['abc'] = 456;
@@ -136,9 +136,9 @@ exports['entity'] = {
 		assert.strictEqual(newObj.value['abc'], 456);
 		assert.strictEqual(newObj.attr(), undefined);
 		obj = en(123);
-		assert.strictEqual(obj.getClass().name, 'Dup');
-		assert.strictEqual(obj.getClass(), newObj.getClass());
-		assert.strictEqual(obj.getClass().super_.name, 'Entity');
+		assert.strictEqual(obj.class_.name, 'dup');
+		assert.strictEqual(obj.class_, newObj.class_);
+		assert.strictEqual(obj.class_.super_.name, 'entity');
 	},
 };
 

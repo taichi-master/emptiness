@@ -109,16 +109,16 @@ exports['dict'] = {
 		var obj = dict({"abc":123, "def":{"xyz":456}});
 		var newObj = obj.dup();
 		assert.notStrictEqual(obj, newObj);
-		assert.strictEqual(obj.getClass(), newObj.getClass());
+		assert.strictEqual(obj.class_, newObj.class_);
 		assert.notStrictEqual(obj.value, newObj.value);
 		assert.strictEqual(obj.value['abc'], newObj.value['abc']);
 		assert.strictEqual(obj.toString(), '{"abc":123,"def":{"xyz":456}}');
 		assert.strictEqual(newObj.toString(), '{"abc":123,"def":{"xyz":456}}');
 		assert.strictEqual(newObj.attr(), undefined);
-		assert.strictEqual(obj.getClass().name, 'Dup');
-		assert.strictEqual(obj.getClass(), newObj.getClass());
-		assert.strictEqual(obj.getClass().super_.name, 'Dict');
-		assert.strictEqual(obj.getClass().super_.super_.name, 'Entity');
+		assert.strictEqual(obj.class_.name, 'dup');
+		assert.strictEqual(obj.class_, newObj.class_);
+		assert.strictEqual(obj.class_.super_.name, 'dict');
+		assert.strictEqual(obj.class_.super_.super_.name, 'entity');
 	},
 };
 

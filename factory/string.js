@@ -4,7 +4,7 @@ var	entityFactory = require('./entity.js'),
 	util = require('../lib/util.js'),
 	Is = util.Is;
 
-var className = 'Str';
+var className = 'string';
 
 var nature = {
 	attr: {
@@ -12,7 +12,7 @@ var nature = {
 	},
 	proto: {
 		create: function create (value, attr) {
-			return this.getClassOf(className).super_.create.call(this,
+			return this.classOf(className).super_.create.call(this,
 				value === null || Is.undef(value) || Is.str(value) ||
 				(Is.obj(value) && !Is.entity(value))
 					? value 
@@ -23,7 +23,7 @@ var nature = {
 			return '';
 		},
 		validate: function validate (value, attr) {
-			if (!this.getClassOf(className).super_.validate(value, attr))
+			if (!this.classOf(className).super_.validate(value, attr))
 				return false;
 
 			if (typeof value === 'string')
@@ -38,10 +38,13 @@ var nature = {
 			return false;
 		},
 		parse: function parse (obj, attr) {
-			return this.getClassOf(className).super_.parse(obj.toString(), attr);
+			return this.classOf(className).super_.parse(obj.toString(), attr);
 		},
 		stringify: function stringify (value, attr) {
 			return '"' + value + '"';
+		},
+		add: function add (a, b) {
+			return [a, b].join('+');
 		},
 		stringOnly: function stringOnly () {
 			return 'String only';

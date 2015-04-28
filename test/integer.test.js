@@ -18,19 +18,19 @@ exports['integer'] = {
 				var i = int(123.5);
 			}, /Integer expected/);
 		var obj = int();
-		assert.strictEqual(obj.getClass().super_, numClass);
-		assert.strictEqual(obj.getClass().super_.super_, numClass.super_);
-		assert.strictEqual(obj.getClass().super_.super_, entityClass);
-		assert.strictEqual(obj.getClass().getDefault, numClass.getDefault);
-		assert.strictEqual(obj.getClass().name, 'Int');
-		assert.strictEqual(obj.getClass().root.name, 'Entity');
-		assert.strictEqual(obj.getClass().super_.name, 'Num');
-		assert.strictEqual(obj.getClass().super_.root.name, 'Entity');
-		assert.strictEqual(obj.getClass().super_.super_.name, 'Entity');
-		assert.strictEqual(obj.getClass().super_.super_.root.name, 'Entity');
-		assert.strictEqual(obj.getClass().root, obj.getClass().super_.super_);
-		assert.strictEqual(obj.getClass().root.super_, obj.getClass().super_.super_.super_);
-		assert.strictEqual(obj.getClass().root.super_, null);
+		assert.strictEqual(obj.class_.super_, numClass);
+		assert.strictEqual(obj.class_.super_.super_, numClass.super_);
+		assert.strictEqual(obj.class_.super_.super_, entityClass);
+		assert.strictEqual(obj.class_.getDefault, numClass.getDefault);
+		assert.strictEqual(obj.class_.name, 'integer');
+		assert.strictEqual(obj.class_.root.name, 'entity');
+		assert.strictEqual(obj.class_.super_.name, 'number');
+		assert.strictEqual(obj.class_.super_.root.name, 'entity');
+		assert.strictEqual(obj.class_.super_.super_.name, 'entity');
+		assert.strictEqual(obj.class_.super_.super_.root.name, 'entity');
+		assert.strictEqual(obj.class_.root, obj.class_.super_.super_);
+		assert.strictEqual(obj.class_.root.super_, obj.class_.super_.super_.super_);
+		assert.strictEqual(obj.class_.root.super_, null);
 
 		assert.strictEqual(int().value, 0);
 		assert.strictEqual(int()._attr, undefined);
@@ -90,7 +90,7 @@ exports['integer'] = {
 		var obj = int();
 		obj.on('change', function(value, oldValue, self) {
 			assert.strictEqual(value, 123);
-			assert.strictEqual(oldValue, 0);
+			assert.strictEqual(oldValue, null);
 			assert.strictEqual(obj, self);
 			done();			
 		});
@@ -129,13 +129,13 @@ exports['integer'] = {
 		var obj = int(123);
 		var newObj = obj.dup();
 		assert.notStrictEqual(obj, newObj);
-		assert.strictEqual(obj.getClass(), newObj.getClass());
+		assert.strictEqual(obj.class_, newObj.class_);
 		assert.strictEqual(obj.value, newObj.value);
 		assert.strictEqual(newObj.value, 123);
-		assert.strictEqual(newObj.getClass().name, 'Dup');
-		assert.strictEqual(newObj.getClass().super_.name, 'Int');
-		assert.strictEqual(obj.getClass().super_.super_.name, 'Num');
-		assert.strictEqual(obj.getClass().super_.super_.super_.name, 'Entity');
+		assert.strictEqual(newObj.class_.name, 'dup');
+		assert.strictEqual(newObj.class_.super_.name, 'integer');
+		assert.strictEqual(obj.class_.super_.super_.name, 'number');
+		assert.strictEqual(obj.class_.super_.super_.super_.name, 'entity');
 	},
 };
 

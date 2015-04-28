@@ -2,7 +2,7 @@
 
 var	entityFactory = require('./entity.js');
 
-var className = 'Num';
+var className = 'number';
 
 var nature = {
 	attr: {
@@ -13,7 +13,7 @@ var nature = {
 			return 0;
 		},
 		validate: function validate (value, attr) {
-			if (!this.getClassOf(className).super_.validate(value, attr))
+			if (!this.classOf(className).super_.validate(value, attr))
 				return false;
 
 			if (typeof value === 'number')
@@ -28,7 +28,7 @@ var nature = {
 			return false;
 		},
 		parse: function parse (str, attr) {
-			return this.getClassOf(className).super_.parse(Number(str), attr);
+			return this.classOf(className).super_.parse(Number(str), attr);
 		},
 		stringify: function stringify (value, attr) {
 			return value.toString(10);

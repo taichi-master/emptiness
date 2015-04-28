@@ -16,7 +16,7 @@ exports['required'] = {
 		var emailClass = emailFactory(),
 			email = emailClass.create.bind(emailClass),
 			obj = email();
-		assert.strictEqual(obj.getClass().name, 'Email');
+		assert.strictEqual(obj.class_.name, 'email');
 		assert.strictEqual(obj.value, '');
 		assert.strictEqual(obj.isNone, true);
 
@@ -25,9 +25,9 @@ exports['required'] = {
 				obj = required();
 			}, /Value expected/);
 		obj = required('whatever');
-		assert.strictEqual(obj.getClass().name, 'Required');
-		assert.strictEqual(obj.getClass().super_.name, 'Entity');
-		assert.strictEqual(obj.getClass().super_.super_, null);
+		assert.strictEqual(obj.class_.name, 'required');
+		assert.strictEqual(obj.class_.super_.name, 'entity');
+		assert.strictEqual(obj.class_.super_.super_, null);
 
 		// email as entity
 		requiredFactory.entityClass = emailClass;
@@ -42,11 +42,11 @@ exports['required'] = {
 		assert.doesNotThrow(function () {
 				obj = required('abc@email.com');
 			}, /Invalid email address/);
-		assert.strictEqual(obj.getClass().name, 'Required');
-		assert.strictEqual(obj.getClass().super_.name, 'Email');
-		assert.strictEqual(obj.getClass().super_.super_.name, 'Str');
-		assert.strictEqual(obj.getClass().super_.super_.super_.name, 'Entity');
-		assert.strictEqual(obj.getClass().super_.super_.super_.super_, null);
+		assert.strictEqual(obj.class_.name, 'required');
+		assert.strictEqual(obj.class_.super_.name, 'email');
+		assert.strictEqual(obj.class_.super_.super_.name, 'string');
+		assert.strictEqual(obj.class_.super_.super_.super_.name, 'entity');
+		assert.strictEqual(obj.class_.super_.super_.super_.super_, null);
 		requiredFactory.entityClass = null;	// reset
 		requiredClass = requiredFactory(),
 		required = requiredClass.create.bind(requiredClass);
@@ -61,11 +61,11 @@ exports['required'] = {
 				obj = email('');
 			}, /Value expected/);
 		obj = email('abc@email.com');
-		assert.strictEqual(obj.getClass().name, 'Required');
-		assert.strictEqual(obj.getClass().super_.name, 'Email');
-		assert.strictEqual(obj.getClass().super_.super_.name, 'Str');
-		assert.strictEqual(obj.getClass().super_.super_.super_.name, 'Entity');
-		assert.strictEqual(obj.getClass().super_.super_.super_.super_, null);
+		assert.strictEqual(obj.class_.name, 'required');
+		assert.strictEqual(obj.class_.super_.name, 'email');
+		assert.strictEqual(obj.class_.super_.super_.name, 'string');
+		assert.strictEqual(obj.class_.super_.super_.super_.name, 'entity');
+		assert.strictEqual(obj.class_.super_.super_.super_.super_, null);
 		assert.strictEqual(obj.value, 'abc@email.com');
 		assert.strictEqual(obj.isNone, false);
 	},
@@ -76,13 +76,13 @@ exports['required'] = {
 			obj = email('abc@email.com');
 			newObj = obj.dup();
 		assert.notStrictEqual(obj, newObj);
-		assert.strictEqual(obj.getClass(), newObj.getClass());
-		assert.strictEqual(obj.getClass().name, 'Dup');
-		assert.strictEqual(obj.getClass().super_.name, 'Required');
-		assert.strictEqual(obj.getClass().super_.super_.name, 'Email');
-		assert.strictEqual(obj.getClass().super_.super_.super_.name, 'Str');
-		assert.strictEqual(obj.getClass().super_.super_.super_.super_.name, 'Entity');
-		assert.strictEqual(obj.getClass().super_.super_.super_.super_.super_, null);
+		assert.strictEqual(obj.class_, newObj.class_);
+		assert.strictEqual(obj.class_.name, 'dup');
+		assert.strictEqual(obj.class_.super_.name, 'required');
+		assert.strictEqual(obj.class_.super_.super_.name, 'email');
+		assert.strictEqual(obj.class_.super_.super_.super_.name, 'string');
+		assert.strictEqual(obj.class_.super_.super_.super_.super_.name, 'entity');
+		assert.strictEqual(obj.class_.super_.super_.super_.super_.super_, null);
 		assert.strictEqual(obj.value, newObj.value);
 		assert.strictEqual(newObj.value, 'abc@email.com');
 	},

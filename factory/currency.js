@@ -4,6 +4,8 @@ var util = require('../lib/util.js'),
 	deepMixIn = util.deepMixIn,
 	floatFactory = require('./float.js');
 
+// Thanks to Joss Crowcroft for his formatMoney function
+// http://www.josscrowcroft.com/2011/code/format-unformat-money-currency-javascript/
 function formatMoney(number, places, symbol, thousand, decimal) {
 	number = number || 0;
 	places = !isNaN(places = Math.abs(places)) ? places : 2;
@@ -24,10 +26,18 @@ var nature = {
 	},
 	proto: {
 		create: function create (value, attr) {
+			switch (typeof attr) {
+				case 'number':
+					attr = {rounding: attr};
+					break;
+				case 'string':
+					attr = {symbol: attr};
+					break;
+			}
 			return this.classOf(className).super_.create.call(this, value, deepMixIn({rounding: 2, symbol: '', thousand: ',', decimal: '.'}, attr));
 		},
 		parse: function parse (str, attr) {
-			return this.classOf(className).super_.parse(str, attr);
+			return this.classOf(className).super_.parse(str.replace(new RegExp('[^0-9-' + attr.decimal + ']', 'g'), ''), attr);
 		},
 		stringify: function stringify (value, attr) {
 			return formatMoney(value, attr.rounding, attr.symbol, attr.thousand, attr.decimal);

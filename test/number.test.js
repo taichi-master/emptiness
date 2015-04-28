@@ -56,7 +56,7 @@ exports['number'] = {
 		var obj = num();
 		obj.on('change', function(value, oldValue, self) {
 			assert.strictEqual(value, 123);
-			assert.strictEqual(oldValue, 0);
+			assert.strictEqual(oldValue, null);
 			assert.strictEqual(obj, self);
 			done();			
 		});
@@ -95,11 +95,11 @@ exports['number'] = {
 		var obj = num(123);
 		var newObj = obj.dup();
 		assert.notStrictEqual(obj, newObj);
-		assert.strictEqual(obj.getClass(), newObj.getClass());
+		assert.strictEqual(obj.class_, newObj.class_);
 		assert.strictEqual(obj.value, newObj.value);
-		assert.strictEqual(newObj.getClass().name, 'Dup');
-		assert.strictEqual(newObj.getClass().super_.name, 'Num');
-		assert.strictEqual(newObj.getClass().super_.super_.name, 'Entity');
+		assert.strictEqual(newObj.class_.name, 'dup');
+		assert.strictEqual(newObj.class_.super_.name, 'number');
+		assert.strictEqual(newObj.class_.super_.super_.name, 'entity');
 	},
 };
 

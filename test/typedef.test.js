@@ -15,19 +15,63 @@ exports['typedef'] = {
 	before: function() {
 	},
 
+	'typedef': function () {
+		// case 1
+		var en = typedef();
+		assert.strictEqual(en.class_.name, 'entity');
+
+		en = typedef(null, 'name');
+		assert.strictEqual(en.class_.name, 'name');
+		assert.strictEqual(en.class_.super_.name, 'entity');
+
+		en = typedef(true);
+		assert.strictEqual(en.class_.name, 'bool');
+		assert.strictEqual(en.class_.super_.name, 'entity');
+
+		en = typedef(123);
+		assert.strictEqual(en.class_.name, 'number');
+		assert.strictEqual(en.class_.super_.name, 'entity');
+
+		en = typedef(/./);
+		assert.strictEqual(en.class_.name, 'regex');
+		assert.strictEqual(en.class_.super_.name, 'entity');
+
+		en = typedef(new Date());
+		assert.strictEqual(en.class_.name, 'datetime');
+		assert.strictEqual(en.class_.super_.name, 'entity');
+
+		en = typedef([]);
+		assert.strictEqual(en.class_.name, 'list');
+		assert.strictEqual(en.class_.super_.name, 'entity');
+
+		en = typedef({});
+		assert.strictEqual(en.class_.name, 'dict');
+		assert.strictEqual(en.class_.super_.name, 'entity');
+
+		en = typedef('John');
+		assert.strictEqual(en.class_.name, 'John');		// It is not string
+		assert.strictEqual(en.class_.super_.name, 'entity');
+
+		en = typedef('John', 'name');
+		assert.strictEqual(en.class_.name, 'name');
+		assert.strictEqual(en.class_.super_.name, 'string');
+		assert.strictEqual(en.class_.super_.super_.name, 'entity');
+
+		en = typedef(en);								// This to ensure the en is a enType
+		assert(Is.type(en));
+		assert.strictEqual(en.class_.name, 'name');
+		assert.strictEqual(en.class_.super_.name, 'string');
+		assert.strictEqual(en.class_.super_.super_.name, 'entity');
+	},
+
 	'.class_': function () {
 		var str = typedef(strCls);
 		assert.strictEqual(str.class_, strCls);
 	},
 
-	'.getClass()': function () {
-		var str = typedef(strCls);
-		assert.strictEqual(str.getClass(), strCls);
-	},
-
 	'.alias()': function () {
 		var str = typedef(strCls);
-		assert.strictEqual(str.alias(), 'str');
+		assert.strictEqual(str.alias(), 'string');
 		assert.strictEqual(str.alias('foo'), str);
 		assert.strictEqual(str.alias('foo').alias(), 'foo');
 	},
@@ -35,7 +79,7 @@ exports['typedef'] = {
 	'.value': function () {
 		var str = typedef(strCls);
 		assert.strictEqual(str.value, strCls.name);
-		assert.strictEqual(str.value, 'Str');
+		assert.strictEqual(str.value, 'string');
 	},
 
 	'.nature': function () {
@@ -47,12 +91,12 @@ exports['typedef'] = {
 		var str = typedef(strCls),
 			en = typedef(entityFactory());
 		assert.strictEqual(en.alias(), 'entity');
-		assert.strictEqual(en.getClass().name, 'Entity');
+		assert.strictEqual(en.class_.name, 'entity');
 		assert.strictEqual(en(123).value, 123);
 		en = en.is(str);
 		assert.strictEqual(en.alias(), 'entity');
-		assert.strictEqual(en.getClass().name, 'Str');	// added one level.
-		assert.strictEqual(en.getClass().super_.name, 'Entity');
+		assert.strictEqual(en.class_.name, 'string');	// added one level.
+		assert.strictEqual(en.class_.super_.name, 'entity');
 		assert.throws(function () {
 			en({_value: 123});
 		}, /String expected/);
@@ -66,8 +110,8 @@ exports['typedef'] = {
 		en = en.has(dup.nature);
 
 		assert.strictEqual(en.alias(), 'dup');
-		assert.strictEqual(en.class_.name, 'Dup');
-		assert.strictEqual(en.class_.super_.name, 'Entity');
+		assert.strictEqual(en.class_.name, 'dup');
+		assert.strictEqual(en.class_.super_.name, 'entity');
 		assert.strictEqual(en.class_.super_.super_, null);
 
 		var obj = en({abc:123});

@@ -4,7 +4,7 @@ var	entityFactory = require('./entity.js'),
 	util = require('../lib/util.js'),
 	Is = util.Is;
 
-var className = 'RegEx';
+var className = 'regex';
 
 var nature = {
 	attr: {
@@ -12,13 +12,13 @@ var nature = {
 	},
 	proto: {
 		create: function create (value, attr) {
-			return this.getClassOf(className).super_.create.call(this, Is.str(value) ? new RegExp(value) : value, attr);
+			return this.classOf(className).super_.create.call(this, Is.str(value) ? new RegExp(value) : value, attr);
 		},
 		getDefault: function getDefault (attr) {
 			return new RegExp();
 		},
 		validate: function validate (value, attr) {
-			if (!this.getClassOf(className).super_.validate(value, attr))
+			if (!this.classOf(className).super_.validate(value, attr))
 				return false;
 
 			if (Is.regex(value))
@@ -33,7 +33,7 @@ var nature = {
 			return false;
 		},
 		parse: function parse (pattern, flags) {
-			return this.getClassOf(className).super_.parse(new RegExp(pattern, flags));
+			return this.classOf(className).super_.parse(new RegExp(pattern, flags));
 		}
 	}
 };

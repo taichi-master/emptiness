@@ -3,7 +3,7 @@
 var	entityFactory = require('./entity.js'),
 	crypto = require('crypto');
 
-var className = 'Password';
+var className = 'password';
 
 var nature = {
 	attr: {
@@ -17,7 +17,7 @@ var nature = {
 						hashedPassword: this.encryptPassword(this.policy(value), salt)
 					} : 
 						value,
-				pw = this.getClassOf(className).super_.create.call(this, _value, attr);
+				pw = this.classOf(className).super_.create.call(this, _value, attr);
 
 			Object.defineProperties(pw, {
 				salt: {
@@ -52,7 +52,7 @@ var nature = {
 
     	objProto: {
     		authenticate: function (plainText) {
-				return this.getClass().encryptPassword(plainText, this.salt) === this.hashedPassword;
+				return this.class_.encryptPassword(plainText, this.salt) === this.hashedPassword;
     		},
     	}
 	}

@@ -2,7 +2,7 @@
 
 var	numFactory = require('./number.js');
 
-var className = 'Float';
+var className = 'float';
 
 var nature = {
 	attr: {
@@ -10,10 +10,10 @@ var nature = {
 	},
 	proto: {
 		parse: function parse (str, attr) {
-			return this.getClassOf(className).super_.parse(parseFloat(str), attr);
+			return this.classOf(className).super_.parse(parseFloat(str), attr);
 		},
 		stringify: function stringify (value, attr) {
-			var str = this.getClassOf(className).super_.stringify(value, attr);
+			var str = this.classOf(className).super_.stringify(value, attr);
 			return str.indexOf('.') > 0 ? str : str + '.0';
 		}
 	}

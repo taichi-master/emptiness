@@ -27,6 +27,9 @@ function createObject (clsObj, value, attr) {	// create instance object.
 				writable: true,
 				configurable: true
 			},
+			class_: {
+				value: clsObj
+			},
 			isNone: {
 				get: function () {
 					return _value === none;
@@ -38,9 +41,11 @@ function createObject (clsObj, value, attr) {	// create instance object.
 				},
 				set: function (newValue) {
 					if (newValue === none || this.validate(newValue, this._attr)) {
-						var oldValue = this.value;
+						// var oldValue = this.value;
+						var oldValue = _value;
 						_value = newValue;
-						this.emit('change', this.value, oldValue, this);
+						this.emit('change', newValue, oldValue, this);
+						// this.emit('change', this.value, oldValue, this);
 					}
 				}
 			},
@@ -71,15 +76,15 @@ function createObject (clsObj, value, attr) {	// create instance object.
 
 var entity = {
 	attr: {
-		name: 'Entity'
+		name: 'entity'
 	},
 	proto: {
 		create: function create (value, attr) {
 			return createObject(this, value, attr);
 		},
-		getClassOf: function getSuperOf (clsName) {
+		classOf: function classOf (clsName) {
 			var class_ = this;
-			while (class_.name !== clsName)
+			while (class_ && class_.name !== clsName)
 				class_ = class_.super_;
 			return class_;
 		},
@@ -121,39 +126,47 @@ var entity = {
 			}
 			return 0;
 		},
+		add: function add (a, b) {
+			return a + b;
+		},
 
 		objProto: {
 			__proto__: events.EventEmitter.prototype,
-			getClass: function getClass () {
-				return this.constructor;
-			},
 			getDefault: function getDefault (attr) {
-				return this.getClass().getDefault(attr);
+				return this.class_.getDefault(Is.undef(attr) ? this._attr : attr);
 			},
 			getValue: function getValue (rawValue, isEntityDefault) {
-				return this.getClass().getValue(rawValue, this._attr, isEntityDefault);
+				return this.class_.getValue(rawValue, this._attr, isEntityDefault);
 			},
 			validate: function validate (value, attr) {
-				return this.getClass().validate(value, attr);
+				return this.class_.validate(value, Is.undef(attr) ? this._attr : attr);
 			},
 			parse: function parse (object, attr) {
-				var obj = this.getClass().parse(object, attr);
+				var obj = this.class_.parse(object, Is.undef(attr) ? this._attr : attr);
 				this.value = obj.value;
 				typeof obj.attr !== 'undefined' && this.attr(obj.attr);
 				return this;
 			},
 			toString: function toString () {
-				return this.getClass().stringify(this.value, this._attr);
+				return this.class_.stringify(this.value, this._attr);
 			},
 			valueOf: function valueOf () {
-				return this.getClass().valueOf(this.value, this._attr);
+				return this.class_.valueOf(this.value, this._attr);
 			},
 			compareTo: function compareTo (b) {
-				return this.getClass().compare(this.value, b);
+				return this.class_.compare(this.value, b);
+			},
+			add: function add (en, attr) {
+				return this.class_.add(this.value, en.value);
+			},
+			instanceOf: function instanceOf (className) {
+				return this.class_.classOf(className) !== null;
 			},
 			attr: function attr (attr) {
-				if (attr) {
-					if (typeof this._attr === 'undefined') {
+				if (Is.undef(attr)) {
+					return this._attr;
+				} else {
+					if (Is.undef(this._attr)) {
 						this._attr = attr;
 					} else {
 						if (Is.obj(attr)) {
@@ -162,8 +175,6 @@ var entity = {
 							return this._attr[attr];	// use parameter 'attr' as key or index.  It is okay to cause exception.
 						}
 					}
-				} else {
-					return this._attr;
 				}
 				return this;
 			}
@@ -180,12 +191,25 @@ var entity = {
 }
 
 function entityClassFactory (clsObj, attr) {
+	clsObj === null && (clsObj = entityClassFactory());
 	var	class_ = Object.create(clsObj ? clsObj : exports.none, {
 				name: {
-					value: Is.obj(attr) && Is.obj(attr.attr) && attr.attr.name ? attr.attr.name : (clsObj ? '(anonymous)' : entity.attr.name)
+					value: Is.str(attr) ? attr : (Is.obj(attr) && Is.obj(attr.attr) && attr.attr.name ? attr.attr.name : (clsObj ? '(anonymous)' : entity.attr.name))
 				},
 				super_: {
-					value: clsObj ? clsObj : null
+					value: clsObj ? clsObj : null,
+					// writable: true
+				},
+				links: {
+					get: function () {
+						var cls = this,
+							lst = [];
+						while (cls) {
+							lst.push(cls.name);
+							cls = cls.super_;
+						}
+						return lst;
+					}
 				}
 			});
 
@@ -195,7 +219,7 @@ function entityClassFactory (clsObj, attr) {
 		});
 	}
 
-	attr && attr.prop && Object.defineProperty(class_, attr.prop);
+	attr && attr.prop && Object.defineProperties(class_, attr.prop);
 
 	// class level link up
 	var proto = (Is.obj(attr) && 'proto' in attr) ? attr.proto : (clsObj ? {} : entity.proto);
@@ -212,7 +236,7 @@ function entityClassFactory (clsObj, attr) {
 			class_.objProp.hasOwnProperty(key) || (class_.objProp[key] = clsObj.objProp[key]);
 		});
 	}
-	
+
 	return class_;
 }
 

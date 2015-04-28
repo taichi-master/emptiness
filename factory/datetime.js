@@ -8,7 +8,7 @@ function toShort (dt, len) {
 	return dt.toJSON().substring(0, len ? len : 19);
 }
 
-var className = 'DateTime';
+var className = 'datetime';
 
 var nature = {
 	attr: {
@@ -16,7 +16,7 @@ var nature = {
 	},
 	proto: {
 		create: function create (value, attr) {
-			return this.getClassOf(className).super_.create.call(this, 
+			return this.classOf(className).super_.create.call(this, 
 				Is.undef(value) || Is.date(value) || Is.obj(value)
 					? value
 					: new Date(value),
@@ -26,11 +26,21 @@ var nature = {
 			return new Date();
 		},
 		validate: function validate (value, attr) {
-			if (!this.getClassOf(className).super_.validate(value, attr))
+			if (!this.classOf(className).super_.validate(value, attr))
 				return false;
 
-			if (Is.date(value))
-				return true;
+			if (!Array.isArray(value))
+				value = [value];
+
+			var rc = true;
+			for (var i=0, len=value.length; i < len; i++) {
+				if (!Is.date(value[i])) {
+					rc = false;
+					break;
+				}
+			}
+			if (rc)
+				return rc;
 
 			// var err = new Error(5006, 'Date Time object expected');
 			var err = new Error('Date Time object expected');
@@ -41,7 +51,7 @@ var nature = {
 			return false;
 		},
 		parse: function parse (str, attr) {
-			return this.getClassOf(className).super_.parse(new Date(str), attr);
+			return this.classOf(className).super_.parse(new Date(str), attr);
 		},
 		stringify: function stringify (value, attr) {
 			return value.toJSON();
@@ -50,10 +60,19 @@ var nature = {
 		compare: function compare (a, b) {
 			return a.valueOf() - b.valueOf();
 		},
+		add: function add (a, b) {
+			if (!Array.isArray(a))
+				a = [a];
+			if (Array.isArray(b))
+				a.concat(b);
+			else
+				a.push(b);
+			return a;
+		},
 
 		objProto: {
 			toShort: function toShort (len) {
-				return this.getClass().toShort(this.value, len);
+				return this.class_.toShort(this.value, len);
 			}
 		},
 

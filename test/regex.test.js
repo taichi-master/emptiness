@@ -52,7 +52,7 @@ exports['regex'] = {
 			val = /.*/;
 		obj.on('change', function(value, oldValue, self) {
 			assert.strictEqual(value, val);
-			assert.strictEqual(oldValue.toString(), '/(?:)/');
+			assert.strictEqual(oldValue, null);
 			assert.strictEqual(obj, self);
 			done();			
 		});
@@ -79,13 +79,13 @@ exports['regex'] = {
 		var obj = regex(val);
 		var newObj = obj.dup();
 		assert.notStrictEqual(obj, newObj);
-		assert.strictEqual(obj.getClass(), newObj.getClass());
+		assert.strictEqual(obj.class_, newObj.class_);
 		assert.notStrictEqual(obj.value, newObj.value);
 		assert.strictEqual(obj.value.toString(), newObj.value.toString());
 		assert.strictEqual(newObj.value.toString(), '/.*/');
-		assert.strictEqual(newObj.getClass().name, 'Dup');
-		assert.strictEqual(newObj.getClass().super_.name, 'RegEx');
-		assert.strictEqual(newObj.getClass().super_.super_.name, 'Entity');
+		assert.strictEqual(newObj.class_.name, 'dup');
+		assert.strictEqual(newObj.class_.super_.name, 'regex');
+		assert.strictEqual(newObj.class_.super_.super_.name, 'entity');
 	},
 };
 

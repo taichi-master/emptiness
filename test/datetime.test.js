@@ -61,7 +61,7 @@ exports['datetime'] = {
 			now = new Date();
 		obj.on('change', function(value, oldValue, self) {
 			assert.strictEqual(value, now);
-			assert.strictEqual(oldValue.short, dtClass.now.short);	// date is not set before there the default is always now
+			assert.strictEqual(oldValue, null);
 			assert.strictEqual(obj, self);
 			done();			
 		});
@@ -101,12 +101,12 @@ exports['datetime'] = {
 		var obj = dt(123);
 		var newObj = obj.dup();
 		assert.notStrictEqual(obj, newObj);
-		assert.strictEqual(obj.getClass(), newObj.getClass());
+		assert.strictEqual(obj.class_, newObj.class_);
 		assert.notStrictEqual(obj.value, newObj.value);
 		assert.strictEqual(obj.value.short, newObj.value.short);
-		assert.strictEqual(newObj.getClass().name, 'Dup');
-		assert.strictEqual(newObj.getClass().super_.name, 'DateTime');
-		assert.strictEqual(newObj.getClass().super_.super_.name, 'Entity');
+		assert.strictEqual(newObj.class_.name, 'dup');
+		assert.strictEqual(newObj.class_.super_.name, 'datetime');
+		assert.strictEqual(newObj.class_.super_.super_.name, 'entity');
 	},
 };
 

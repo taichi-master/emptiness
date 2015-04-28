@@ -2,7 +2,7 @@
 
 var	entityFactory = require('./entity.js');
 
-var className = 'Required';
+var className = 'required';
 
 var nature = {
 	attr: {
@@ -11,7 +11,7 @@ var nature = {
 	proto: {
 		create: function (value, attr) {
 			if (value) {
-				return this.getClassOf(className).super_.create.call(this, value, attr);
+				return this.classOf(className).super_.create.call(this, value, attr);
 			}
 			else {
 				var err = new Error('Value expected');

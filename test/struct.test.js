@@ -1,14 +1,12 @@
 var assert = require('assert'),
-	util = require('../lib/util.js'),
-	Is = util.Is,
-	spawn = require('../lib/spawn.js'),
+	typedef = require('../lib/typedef.js'),
+	entityFactory = require('../factory/entity.js'),
 	dupFactory = require('../factory/dup.js'),
 	structFactory = require('../factory/struct.js'),
-	structClass = structFactory(),
-	struct = structClass.create.bind(structClass);
+	structClass = structFactory();
 
-var first = spawn('first'),
-	last = spawn('last'),
+var first = typedef(entityFactory(null, 'first')),
+	last = typedef(entityFactory().has('last')),
 	nameVal = {first:'John', last:'Doe'},
 	nameStr = '{"first":"John","last":"Doe"}',
 	name,
@@ -20,107 +18,76 @@ exports['struct'] = {
 				new structClass();
 			}, Error);
 	},
+
 	'instantiate': function() {
 		// case 1
-		name = structFactory().create([first, last]);
-		assert.strictEqual(name.struct.value.length, 2);
-		assert.strictEqual(name.name, '(anonymous)');
-		name = struct([first, last], 'name');
-		assert.strictEqual(name.name, 'name');
-		assert.strictEqual(name.super_.name, 'Rec');
-		assert.strictEqual(name.super_.super_.name, 'Dict');
-		assert.strictEqual(name.super_.super_.super_.name, 'Entity');
-		assert.strictEqual(name.struct.getClass().name, 'Struct');
-		assert.strictEqual(name.struct.getClass().super_.name, 'List');
-		assert.strictEqual(name.struct.getClass().super_.super_.name, 'Entity');
+		name = structFactory(null, [first, last]);
+		assert.strictEqual(name.enTypes.length, 2);
+		assert.strictEqual(name.name, 'struct');
+		assert.strictEqual(name.super_.name, 'dict');
+		assert.strictEqual(name.super_.super_.name, 'entity');
 		user = name.create(nameVal);
 		assert.strictEqual(user.toString(), nameStr);
-		assert.strictEqual(user.getClass().name, 'name');
-		assert.strictEqual(user.getClass().struct.getClass().name, 'Struct');
+		name = name.create.bind(name);
+		user = name(nameVal);
+		assert.strictEqual(user.toString(), nameStr);
 
 		// case 2
-		name = struct()
-					.has(first)
-					.has(last);
-		assert.strictEqual(name.struct.value.length, 2);
-		assert.strictEqual(name.name, '(anonymous)');
-		name = struct([], 'name')
-					.has(first)
-					.has(last);
+		name = structFactory(null, {attr: {name: 'name', enTypes: [first, last]}});
+		assert.strictEqual(name.enTypes.length, 2);
 		assert.strictEqual(name.name, 'name');
-		assert.strictEqual(name.super_.name, 'Rec');
-		assert.strictEqual(name.super_.super_.name, 'Dict');
-		assert.strictEqual(name.super_.super_.super_.name, 'Entity');
-		assert.strictEqual(name.struct.getClass().name, 'Struct');
-		assert.strictEqual(name.struct.getClass().super_.name, 'List');
-		assert.strictEqual(name.struct.getClass().super_.super_.name, 'Entity');
+		assert.strictEqual(name.super_.name, 'struct');
+		assert.strictEqual(name.super_.super_.name, 'dict');
+		assert.strictEqual(name.super_.super_.super_.name, 'entity');
+		assert.strictEqual(name.__proto__.name, 'struct');
+		assert.strictEqual(name.__proto__.__proto__.name, 'dict');
+		assert.strictEqual(name.__proto__.__proto__.__proto__.name, 'entity');
 		user = name.create(nameVal);
 		assert.strictEqual(user.toString(), nameStr);
-		assert.strictEqual(user.getClass().name, 'name');
-		assert.strictEqual(user.getClass().struct.getClass().name, 'Struct');
+		name = name.create.bind(name);
+		user = name(nameVal);
+		assert.strictEqual(user.toString(), nameStr);
 
 		// case 3
-		name = struct().has([first, last]);
-		assert.strictEqual(name.struct.value.length, 2);
-		assert.strictEqual(name.name, '(anonymous)');
-		assert.strictEqual(name.super_.name, 'Rec');
-		assert.strictEqual(name.super_.super_.name, 'Dict');
-		assert.strictEqual(name.super_.super_.super_.name, 'Entity');
-		assert.strictEqual(name.struct.getClass().name, 'Struct');
-		assert.strictEqual(name.struct.getClass().super_.name, 'List');
-		assert.strictEqual(name.struct.getClass().super_.super_.name, 'Entity');
+		name = structFactory().has('name').has([first, last]);
+		assert.strictEqual(name.enTypes.length, 2);
+		assert.strictEqual(name.name, 'name');
+		assert.strictEqual(name.super_.name, 'struct');
+		assert.strictEqual(name.super_.super_.name, 'dict');
+		assert.strictEqual(name.super_.super_.super_.name, 'entity');
+		assert.strictEqual(name.__proto__.name, 'struct');
+		assert.strictEqual(name.__proto__.__proto__.name, 'dict');
+		assert.strictEqual(name.__proto__.__proto__.__proto__.name, 'entity');
 		user = name.create(nameVal);
 		assert.strictEqual(user.toString(), nameStr);
-		assert.strictEqual(user.getClass().name, '(anonymous)');
-		assert.strictEqual(user.getClass().struct.getClass().name, 'Struct');
-
-		// case 4
-		name = struct([first, last]);
-		assert.strictEqual(name.struct.value.length, 2);
-		assert.strictEqual(name.name, '(anonymous)');
-		assert.strictEqual(name.super_.name, 'Rec');
-		assert.strictEqual(name.super_.super_.name, 'Dict');
-		assert.strictEqual(name.super_.super_.super_.name, 'Entity');
-		assert.strictEqual(name.__proto__.name, 'Rec');
-		assert.strictEqual(name.__proto__.__proto__.name, 'Dict');
-		assert.strictEqual(name.__proto__.__proto__.__proto__.name, 'Entity');
-		assert.strictEqual(name.struct.getClass().name, 'Struct');
-		assert.strictEqual(name.struct.getClass().super_.name, 'List');
-		assert.strictEqual(name.struct.getClass().super_.super_.name, 'Entity');
-		user = name.create(nameVal);
+		name = name.create.bind(name);
+		user = name(nameVal);
 		assert.strictEqual(user.toString(), nameStr);
-		assert.strictEqual(user.getClass().name, '(anonymous)');
-		assert.strictEqual(user.getClass().struct.getClass().name, 'Struct');
 	},
 
 	'dup': function() {
 		structFactory.entityClass = dupFactory();
-		structClass = structFactory(),
-		struct = structClass.create.bind(structClass);
-		assert.throws(function () {
-				var name = struct({});
-			}, /Array or arguments object expected/);
-		name = struct([first, last], 'name')
-		assert.strictEqual(name.struct.value.length, 2);
+		name = structFactory().has('name').has([first, last]);
+		assert.strictEqual(name.enTypes.value.length, 2);
 		assert.strictEqual(name.name, 'name');
-		assert.strictEqual(name.super_.name, 'Rec');
-		assert.strictEqual(name.super_.super_.name, 'Dict');
-		assert.strictEqual(name.super_.super_.super_.name, 'Dup');
-		assert.strictEqual(name.super_.super_.super_.super_.name, 'Entity');
-		assert.strictEqual(name.struct.getClass().name, 'Struct');
-		assert.strictEqual(name.struct.getClass().super_.name, 'List');
-		assert.strictEqual(name.struct.getClass().super_.super_.name, 'Dup');
-		assert.strictEqual(name.struct.getClass().super_.super_.super_.name, 'Entity');
+		assert.strictEqual(name.super_.name, 'struct');
+		assert.strictEqual(name.super_.super_.name, 'dict');
+		assert.strictEqual(name.super_.super_.super_.name, 'dup');
+		assert.strictEqual(name.super_.super_.super_.super_.name, 'entity');
+		assert.strictEqual(name.enTypes.class_.name, 'typelist');
+		assert.strictEqual(name.enTypes.class_.super_.name, 'list');
+		assert.strictEqual(name.enTypes.class_.super_.super_.name, 'entity');
 		user = name.create(nameVal);
 		assert.strictEqual(user.toString(), nameStr);
 		var user2 = user.dup();
 		assert.notStrictEqual(user, user2);
 		assert.notStrictEqual(user.value, user2.value);
-		assert.strictEqual(user.getClass(), user2.getClass());
-		assert.strictEqual(user.getClass().struct, user2.getClass().struct);
+		assert.strictEqual(user.class_, user2.class_);
 		assert.strictEqual(user.toString(), user2.toString());
 		assert.strictEqual(user2.toString(), nameStr);
-	},};
+		structFactory.entityClass = null;
+	},
+};
 
 if (module == require.main) {
 	require('./run_mocha.js')(__filename);

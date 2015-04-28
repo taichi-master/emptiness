@@ -2,10 +2,11 @@
 
 var	entityFactory = require('./entity.js'),
 	util = require('../lib/util.js'),
+	Is = util.Is,
 	dict_stringify = util.dict_stringify,
 	list_valueOf = util.list_valueOf;
 
-var className = 'Dict';
+var className = 'dict';
 
 var nature = {
 	attr: {
@@ -16,7 +17,7 @@ var nature = {
 			return {};
 		},
 		validate: function validate (value, attr) {
-			if (!this.getClassOf(className).super_.validate(value, attr))
+			if (!this.classOf(className).super_.validate(value, attr))
 				return false;
 
 			// no need validate all contents because all the values are validated already.
@@ -32,7 +33,7 @@ var nature = {
 			return false;
 		},
 		parse: function parse (str, attr) {
-			return this.getClassOf(className).super_.parse(JSON.parse(str), attr);
+			return this.classOf(className).super_.parse(JSON.parse(str), attr);
 		},
 		stringify: dict_stringify,
 		valueOf: function valueOf (value, attr) {
@@ -42,6 +43,19 @@ var nature = {
 				sb[key] = Array.isArray(obj) ? list_valueOf(obj) : obj.valueOf();
 			});
 			return sb;
+		},
+		add: function add (a, b) {
+			Object.keys(b).forEach(function (key) {
+				if (a.hasOwnProperty(key)) {
+					if (Is.entity(a))
+						a[key].value = a[key].add(b[key]);
+					else
+						a[key] += b[key];
+				}
+				else
+					a[key] = b[key];
+			});
+			return a;
 		}
 	}
 };

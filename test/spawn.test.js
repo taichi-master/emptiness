@@ -31,8 +31,8 @@ exports['spawn'] = {
 
 		assert.strictEqual(role.alias(), 'role');
 		assert.strictEqual(role.class_.name, 'role');
-		assert.strictEqual(role.class_.super_.name, 'Enum');
-		assert.strictEqual(role.class_.super_.super_.name, 'Entity');
+		assert.strictEqual(role.class_.super_.name, 'enumerator');
+		assert.strictEqual(role.class_.super_.super_.name, 'entity');
 		assert.strictEqual(role.class_.entities.length, 3);
 
 		assert.ok(Is.type(role));
@@ -61,20 +61,20 @@ exports['spawn'] = {
 						 .has(name)
 						 .has(spawn('email'))
 						 .has(role),
-			usr = account({name:{first:'John', last:'Doe'}, email:'doe@email.com', role:'user'});	// role can accept a string and ...
+			usr = account({name:{first:'John', last:'Doe'}, email:'doe@email.com', role:'user'});	// role can accept a string and ...			
 		assert.strictEqual(usr.toString(), '{"name":{"first":"John","last":"Doe"},"email":"doe@email.com","role":"user"}');
 		assert.ok(usr.role.Is(user));	// ... convert string to a proper value.
 
 		// create struct by using struct class
-		account = struct([], 'account')
+		account = struct.has('account')
 					.has(name)
 					.has(spawn('email'))
 					.has(role),
-		usr = account.create({name:{first:'John', last:'Doe'}, email:'doe@email.com', role:admin});
+		usr = account({name:{first:'John', last:'Doe'}, email:'doe@email.com', role:admin});
 		assert.strictEqual(usr.toString(), '{"name":{"first":"John","last":"Doe"},"email":"doe@email.com","role":"admin"}');
 
 		// wrap clsObj with enType
-		account = spawn(struct([name, spawn('email'), role]));
+		account = spawn(struct.has([name, spawn('email'), role]));
 		usr = account({name:{first:'John', last:'Doe'}, email:'doe@email.com'});
 		assert.strictEqual(usr.toString(), '{"name":{"first":"John","last":"Doe"},"email":"doe@email.com","role":"guest"}');
 
@@ -89,8 +89,8 @@ exports['spawn'] = {
 		var usr2 = usr.dup();
 		assert.notStrictEqual(usr, usr2);
 		assert.notStrictEqual(usr.value, usr2.value);
-		assert.strictEqual(usr.getClass(), usr2.getClass());
-		assert.strictEqual(usr.getClass().struct, usr2.getClass().struct);
+		assert.strictEqual(usr.class_, usr2.class_);
+		assert.strictEqual(usr.class_.struct, usr2.class_.struct);
 		assert.strictEqual(usr.toString(), usr2.toString());
 		assert.strictEqual(usr2.toString(), '{"name":{"first":"John","last":"Doe"},"email":"doe@email.com","role":"user"}');
 		spawn.entityClass = null;
@@ -118,17 +118,17 @@ exports['spawn'] = {
 		assert.strictEqual(user.valueOf().email, undefined);
 		assert.strictEqual(user.toString(), '{"name":"John"}');
 		assert.strictEqual(email.alias(), 'email');
-		assert.strictEqual(email.class_.name, 'Email');
-		assert.strictEqual(email.class_.super_.name, 'Str');
-		assert.strictEqual(email.class_.super_.super_.name, 'Entity');
+		assert.strictEqual(email.class_.name, 'email');
+		assert.strictEqual(email.class_.super_.name, 'string');
+		assert.strictEqual(email.class_.super_.super_.name, 'entity');
 
 		// without email but with required modifier
 		email = email.is(required);
 		assert.strictEqual(email.alias(), 'email');
-		assert.strictEqual(email.class_.name, 'Required');
-		assert.strictEqual(email.class_.super_.name, 'Email');
-		assert.strictEqual(email.class_.super_.super_.name, 'Str');
-		assert.strictEqual(email.class_.super_.super_.super_.name, 'Entity');
+		assert.strictEqual(email.class_.name, 'required');
+		assert.strictEqual(email.class_.super_.name, 'email');
+		assert.strictEqual(email.class_.super_.super_.name, 'string');
+		assert.strictEqual(email.class_.super_.super_.super_.name, 'entity');
 		account = spawn('account', [spawn(str, 'name'), email]);	// note: needs to redefined account again
 		assert.throws(function () {
 				user = account({name:'John'})

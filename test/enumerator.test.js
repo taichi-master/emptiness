@@ -19,9 +19,9 @@ exports['enumerator'] = {
 			roles = enumClass.has(['user', 'admin', 'guest']).create.bind(enumClass),
 			role = roles();
 
-		assert.strictEqual(role.getClass().name, 'Enum');
-		assert.strictEqual(role.getClass().super_.name, 'Entity');
-		assert.strictEqual(role.getClass().super_.super_, null);
+		assert.strictEqual(role.class_.name, 'enumerator');
+		assert.strictEqual(role.class_.super_.name, 'entity');
+		assert.strictEqual(role.class_.super_.super_, null);
 
 		assert.ok(role.isNone);
 		assert.ifError(role.Is('user'));
@@ -43,10 +43,10 @@ exports['enumerator'] = {
 			roles = enumClass.create.bind(enumClass),
 			role = roles();
 
-		assert.strictEqual(role.getClass().name, 'Role');
-		assert.strictEqual(role.getClass().super_.name, 'Enum');
-		assert.strictEqual(role.getClass().super_.super_.name, 'Entity');
-		assert.strictEqual(role.getClass().super_.super_.super_, null);
+		assert.strictEqual(role.class_.name, 'Role');
+		assert.strictEqual(role.class_.super_.name, 'enumerator');
+		assert.strictEqual(role.class_.super_.super_.name, 'entity');
+		assert.strictEqual(role.class_.super_.super_.super_, null);
 
 		assert.ok(role.isNone);
 		assert.ifError(role.Is('user'));
@@ -71,12 +71,12 @@ exports['enumerator'] = {
 			obj = roles(en('admin')),
 			newObj = obj.dup();
 		assert.notStrictEqual(obj, newObj);
-		assert.strictEqual(obj.getClass(), newObj.getClass());
-		assert.strictEqual(obj.getClass().name, 'Role');
-		assert.strictEqual(obj.getClass().super_.name, 'Enum');
-		assert.strictEqual(obj.getClass().super_.super_.name, 'Dup');
-		assert.strictEqual(obj.getClass().super_.super_.super_.name, 'Entity');
-		assert.strictEqual(obj.getClass().super_.super_.super_.super_, null);
+		assert.strictEqual(obj.class_, newObj.class_);
+		assert.strictEqual(obj.class_.name, 'Role');
+		assert.strictEqual(obj.class_.super_.name, 'enumerator');
+		assert.strictEqual(obj.class_.super_.super_.name, 'dup');
+		assert.strictEqual(obj.class_.super_.super_.super_.name, 'entity');
+		assert.strictEqual(obj.class_.super_.super_.super_.super_, null);
 		assert.strictEqual(obj.value, newObj.value);
 		assert.strictEqual(newObj.value.value, 'admin');
 		newObj.value = enumClass.memberOf('user');
@@ -94,12 +94,12 @@ exports['enumerator'] = {
 		obj = enumClass2.create('Admin');
 		newObj = obj.dup();
 		assert.notStrictEqual(obj, newObj);
-		assert.strictEqual(obj.getClass(), newObj.getClass());
-		assert.strictEqual(obj.getClass().name, 'Role');
-		assert.strictEqual(obj.getClass().super_.name, 'Enum');
-		assert.strictEqual(obj.getClass().super_.super_.name, 'Dup');
-		assert.strictEqual(obj.getClass().super_.super_.super_.name, 'Entity');
-		assert.strictEqual(obj.getClass().super_.super_.super_.super_, null);
+		assert.strictEqual(obj.class_, newObj.class_);
+		assert.strictEqual(obj.class_.name, 'Role');
+		assert.strictEqual(obj.class_.super_.name, 'enumerator');
+		assert.strictEqual(obj.class_.super_.super_.name, 'dup');
+		assert.strictEqual(obj.class_.super_.super_.super_.name, 'entity');
+		assert.strictEqual(obj.class_.super_.super_.super_.super_, null);
 		assert.strictEqual(obj.value, newObj.value);
 		assert.strictEqual(newObj.value.value, 'Admin');
 		obj.value = enumClass2.memberOf('User');

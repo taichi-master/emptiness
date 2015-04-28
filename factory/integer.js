@@ -2,7 +2,7 @@
 
 var	numFactory = require('./number.js');
 
-var className = 'Int';
+var className = 'integer';
 
 var nature = {
 	attr: {
@@ -10,7 +10,7 @@ var nature = {
 	},
 	proto: {
 		validate: function validate (value, attr) {
-			if (!this.getClassOf(className).super_.validate(value, attr))
+			if (!this.classOf(className).super_.validate(value, attr))
 				return false;
 
 			if (value % 1 === 0)
@@ -24,7 +24,7 @@ var nature = {
 			return false;
 		},
 		parse: function parse (str, attr) {
-			return this.getClassOf(className).super_.parse(parseInt(str), attr);
+			return this.classOf(className).super_.parse(parseInt(str), attr);
 		}
 	}
 };

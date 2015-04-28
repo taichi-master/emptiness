@@ -2,10 +2,12 @@
 
 var util = require('../lib/util.js'),
 	Is = util.Is,
-	recordFactory = require('./record.js'),
-	listFactory = require('./list.js');
+	typedef = require('../lib/typedef.js'),
+	structlistFactory = require('./structlist.js'),
+	typelistFactory = require('./typelist.js'),
+	dictFactory = require('./dict.js');
 
-var className = 'Struct';
+var className = 'struct';
 
 var nature = {
 	attr: {
@@ -13,31 +15,140 @@ var nature = {
 	},
 	proto: {
 		create: function create (value, attr) {
-			var	struct = value ? value : [],
-				recCls = this.recCls.has({attr: {name: Is.str(attr) ? attr : '(anonymous)'}});
+			var _private = {},
+				self = this,
+				prop = {},
+				obj,
+				enTypes = this.enTypes;
 
-			recCls.struct = this.getClassOf(className).super_.create.call(this, struct, attr);
+			if (value === null || Is.undef(value))
+				return this.classOf(className).super_.create.call(this, value, attr);
 
-			return recCls;
+			var dictFactory = typedef.dictFactory,
+				listFactory = typedef.listFactory,
+				structFactory = structlistFactory.structFactory;
+			typedef.dictFactory = exports.dictFactory ? exports.dictFactory : structClassFactory;
+			typedef.listFactory = exports.listFactory ? exports.listFactory : structlistFactory;
+			structlistFactory.structFactory = structClassFactory;
+
+			Object.keys(value).forEach(function (key) {	// build structure on-the-fly based on data
+				var v = value[key],
+					val =  v ? (Is.date(v) ? v : v.valueOf()) : (Is.undef(v) ? null : v),
+					enType = enTypes.getType(key);
+
+				if (Is.undef(enType))
+					enTypes.push( enType = typedef(val, key) );
+
+				_private[key] = enType(val, attr);
+			});
+
+			structlistFactory.structFactory = structFactory;
+			typedef.dictFactory = dictFactory;
+			typedef.listFactory = listFactory;
+
+			enTypes.value.forEach(function (enType) {	// set structure properties
+				var key = enType.alias();
+				if (Is.undef(_private[key])){
+					_private[key] = enType();
+				}
+				prop[key] = {
+					get: function () {
+						return _private[key];
+					}
+				}
+				// if (!Is.undef(_private[key])){
+				// 	prop[key] = {
+				// 		get: function () {
+				// 			return _private[key];
+				// 		}
+				// 	}
+				// }
+			});
+
+			obj = this.classOf(className).super_.create.call(this, _private, attr);
+
+			Object.defineProperties(obj, prop);
+
+			return obj;
+		},
+		stringify: function stringify (value, attr) {
+			return this.classOf(className).super_.stringify(this.valueOf(value, attr), attr);
+		},
+		valueOf: function valueOf (value, attr) {
+			var obj, val,
+				sb = {};
+			Object.keys(value).forEach(function (key) {
+				obj = value[key];
+				if (obj === null)
+					console.log(key)
+				else {
+					if (!obj.isNone) {
+						val = obj.valueOf();
+						if (val !== null)
+							sb[key] = val;
+					}
+				}
+			});
+			return sb;
+		},
+		has: function has (value) {
+			var class_ = this;
+			if (Is.str(value) || Is.attr(value)) {
+				// class_ = this.classOf(className).super_.has.call(this, value);
+				class_ = this.classOf('dict').has.call(this, value);
+			} else {
+				if (!Array.isArray(value))
+					value = [value];
+				value.forEach(function (obj) {
+					class_.enTypes.push(obj);
+				});
+			}
+			return class_;
+		},
+		objProp: {
+			summary: { 
+				get: function () {
+					var self = this,
+						class_ = self.class_,
+						dictClass = class_.classOf('dict'),
+						summ = {};
+					class_.enTypes.value.forEach(function (enType) {
+						var key = enType.alias();
+						if (self.hasOwnProperty(key))
+							summ[key] = self[key].hasOwnProperty('summary')  ? self[key].summary : self[key];
+					});
+					return dictClass.create(summ);
+				}
+			}
 		}
 	}
 };
 
-exports = module.exports = function structClassFactory (clsObj, attr) {
-	var temp = listFactory.__proto__,
-		temp2 = recordFactory.__proto__;
-	listFactory.__proto__ = recordFactory.__proto__ = exports;
-
-	var _this = clsObj ? clsObj : (exports.listClass ? exports.listClass : listFactory()),
+function structClassFactory (clsObj, attr) {
+	var temp = dictFactory.__proto__;
+	dictFactory.__proto__ = exports;
+	var _this = clsObj ? clsObj : (exports.dictClass ? exports.dictClass : dictFactory()),
 		class_ = _this.has(nature);
+	dictFactory.__proto__ = temp;
 
-	class_.recCls = exports.recordClass ? exports.recordClass : recordFactory();
-	
-	listFactory.__proto__ = temp;
-	recordFactory.__proto__ = temp2;
+	var _enTypes = (exports.typelistClass ? exports.typelistClass : typelistFactory()).create(
+		Array.isArray(attr) ?
+			attr : 
+			(Is.attr(attr) && attr.attr.enTypes ? attr.attr.enTypes : [])
+	);
+	Object.defineProperty(class_, 'enTypes', {
+		get: function () {
+			return _enTypes;
+		},
+		set: function (value) {
+			_enTypes = value;
+		}
+	}); 
 
-	if (attr)
-		return class_.has(attr);
-	
+	if (Is.attr(attr) || Is.str(attr))
+		class_ = class_.has(attr);
+
 	return class_;
 };
+
+exports = module.exports = structClassFactory

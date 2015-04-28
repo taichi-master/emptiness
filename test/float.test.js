@@ -57,7 +57,7 @@ exports['float'] = {
 		var obj = float();
 		obj.on('change', function(value, oldValue, self) {
 			assert.strictEqual(value, value);
-			assert.strictEqual(oldValue, 0);
+			assert.strictEqual(oldValue, null);
 			assert.strictEqual(obj, self);
 			done();			
 		});
@@ -69,7 +69,7 @@ exports['float'] = {
 		var obj = float();
 		obj.on('change', function(value, oldValue, self) {
 			assert.strictEqual(value, value);
-			assert.strictEqual(oldValue, 0);
+			assert.strictEqual(oldValue, null);
 			assert.strictEqual(obj, self);
 			done();			
 		});
@@ -118,14 +118,14 @@ exports['float'] = {
 		var obj = float(123.5);
 		var newObj = obj.dup();
 		assert.notStrictEqual(obj, newObj);
-		assert.strictEqual(obj.getClass(), newObj.getClass());
+		assert.strictEqual(obj.class_, newObj.class_);
 		assert.strictEqual(obj.value, newObj.value);
 		assert.strictEqual(newObj.value, 123.5);
-		assert.strictEqual(obj.getClass().name, 'Dup');
-		assert.strictEqual(obj.getClass(), newObj.getClass());
-		assert.strictEqual(obj.getClass().super_.name, 'Float');
-		assert.strictEqual(obj.getClass().super_.super_.name, 'Num');
-		assert.strictEqual(obj.getClass().super_.super_.super_.name, 'Entity');
+		assert.strictEqual(obj.class_.name, 'dup');
+		assert.strictEqual(obj.class_, newObj.class_);
+		assert.strictEqual(obj.class_.super_.name, 'float');
+		assert.strictEqual(obj.class_.super_.super_.name, 'number');
+		assert.strictEqual(obj.class_.super_.super_.super_.name, 'entity');
 	},
 };
 

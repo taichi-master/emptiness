@@ -5,7 +5,7 @@
 var	entityFactory = require('./entity.js'),
 	util = require('../lib/util.js');
 
-var className = 'Dup';
+var className = 'dup';
 
 var nature = {
 	attr: {

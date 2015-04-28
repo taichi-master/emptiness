@@ -2,7 +2,7 @@
 
 var	stringFactory = require('./string.js');
 
-var className = 'Email';
+var className = 'email';
 
 var nature = {
 	attr: {
@@ -10,7 +10,7 @@ var nature = {
 	},
 	proto: {
 		validate: function validate (value, attr) {
-			if (!this.getClassOf(className).super_.validate(value, attr))
+			if (!this.classOf(className).super_.validate(value, attr))
 				return false;
 
 			if (this.re.test(value))

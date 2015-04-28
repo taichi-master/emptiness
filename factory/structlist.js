@@ -22,7 +22,7 @@ var nature = {
 				enType,
 				obj;
 			
-			if (value) {
+			if (value && Array.isArray(value)) {
 				if (class_.enType === null) {
 					var dictFactory = typedef.dictFactory,
 						listFactory = typedef.listFactory;
@@ -39,7 +39,8 @@ var nature = {
 				value.forEach(function (val) {
 					lst.push(Is.entity(val) ? val : enType(val, attr));
 				});
-			}
+			} else
+				lst = value;
 
 			obj = class_.super_.create.call(this, lst, attr);
 
@@ -89,9 +90,9 @@ var nature = {
 			return class_;
 		},
 		objProto: {
-			push: function push (obj) {
+			push: function push (val) {
 				this.value = this.value;
-				// this.value.push(enforce(obj, this.class_.enType));
+				this.value.push(Is.entity(val) ? val : this.class_.enType(val, this._attr));
 				return this;
 			}
 		},

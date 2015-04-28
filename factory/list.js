@@ -5,7 +5,7 @@ var	entityFactory = require('./entity.js'),
 	list_stringify = util.list_stringify,
 	list_valueOf = util.list_valueOf;
 
-var className = 'List';
+var className = 'list';
 
 var nature = {
 	attr: {
@@ -16,7 +16,7 @@ var nature = {
 			return [];
 		},
 		validate: function validate (value, attr) {
-			if (!this.getClassOf(className).super_.validate(value, attr))
+			if (!this.classOf(className).super_.validate(value, attr))
 				return false;
 
 
@@ -35,10 +35,13 @@ var nature = {
 		parse: function parse (str, attr) {
 			var _delimit = attr && attr.delimit ? attr.delimit : 
 							(this._attr && this._attr.delimit ? this._attr.delimit : ' ');
-			return this.getClassOf(className).super_.parse(str.split(_delimit));
+			return this.classOf(className).super_.parse(str.split(_delimit));
 		},
 		stringify: list_stringify,
 		valueOf: list_valueOf,
+		add: function add (a, b) {
+			return a.concat(b);
+		},
 		objProto: {
 			push: function push (obj) {
 				this.value = this.value;
@@ -48,6 +51,13 @@ var nature = {
 			pop: function pop () {
 				return this.value.pop();
 			},
+		},
+		objProp: {
+			length: {
+				get: function () {
+					return this.value.length;
+				}
+			}
 		}
 	}
 };

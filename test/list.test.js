@@ -75,7 +75,7 @@ exports['list'] = {
 			assert.strictEqual(value[0], 1);
 			assert.strictEqual(value[1], 2);
 			assert.strictEqual(value[2], 3);
-			assert.strictEqual(oldValue.length, 0);
+			assert.strictEqual(oldValue, null);
 			assert.strictEqual(lst, self);
 			done();			
 		});
@@ -120,7 +120,7 @@ exports['list'] = {
 		var obj = list([1,num(2.2),num(3.0), str('abc'), 'def']);
 		var newObj = obj.dup();
 		assert.notStrictEqual(obj, newObj);
-		assert.strictEqual(obj.getClass(), newObj.getClass());
+		assert.strictEqual(obj.class_, newObj.class_);
 		assert.notStrictEqual(obj.value, newObj.value);
 		assert.strictEqual(obj.value[0], newObj.value[0]);
 		assert.strictEqual(obj.value[1].value, newObj.value[1].value);
@@ -134,10 +134,10 @@ exports['list'] = {
 		assert.strictEqual(obj.value[2].value, 3);
 		assert.strictEqual(newObj.value['2'].value, 456);
 		assert.strictEqual(newObj.attr(), undefined);
-		assert.strictEqual(obj.getClass().name, 'Dup');
-		assert.strictEqual(obj.getClass(), newObj.getClass());
-		assert.strictEqual(obj.getClass().super_.name, 'List');
-		assert.strictEqual(obj.getClass().super_.super_.name, 'Entity');
+		assert.strictEqual(obj.class_.name, 'dup');
+		assert.strictEqual(obj.class_, newObj.class_);
+		assert.strictEqual(obj.class_.super_.name, 'list');
+		assert.strictEqual(obj.class_.super_.super_.name, 'entity');
 	},
 };
 

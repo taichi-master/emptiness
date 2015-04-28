@@ -13,7 +13,7 @@ function getLookUp (value) {
 	return lookup;
 }
 
-var className = 'Enum';
+var className = 'enumerator';
 
 var nature = {
 	attr: {
@@ -40,10 +40,10 @@ var nature = {
 				err.type = this;
 				throw err;
 			}
-			return this.getClassOf(className).super_.create.call(this, _value ? _value : this.getDefault(attr), attr);
+			return this.classOf(className).super_.create.call(this, _value ? _value : this.getDefault(attr), attr);
 		},
 		validate: function validate (value, attr) {
-			var this_ = this.getClassOf(className),
+			var this_ = this.classOf(className),
 				entities = this.entities;
 
 			if (!this_.super_.validate(value, attr))
@@ -64,7 +64,7 @@ var nature = {
 		has: function has (value) {
 			var class_ = this;
 			if (Is.attr(value)) {
-				class_ = this.getClassOf(className).super_.has.call(this, value);
+				class_ = this.classOf(className).super_.has.call(this, value);
 			} else {
 				if (!Array.isArray(value))
 					value = [value];

@@ -23,7 +23,10 @@ var util = require('../lib/util.js'),
 // test = require('./typedef.test.js');
 // test.typedef['.has()']();
 
-test = require('./spawn.test.js');
-test.spawn.enumerator();
+// test = require('./spawn.test.js');
+// test.spawn.enumerator();
 // test.spawn.struct();
 // test.spawn.required();
+
+test = require('./structlist.test.js');
+test.structlist.instantiate();
