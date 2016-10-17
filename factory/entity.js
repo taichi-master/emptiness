@@ -21,12 +21,12 @@ function createObject (clsObj, value, attr) {	// create instance object.
 	var _value,		// only validated value will be stored.
 		none = clsObj.root.getDefault(attr),	// = null
 		prop = {
-			constructor: {
-				value: clsObj,
-				enumerable: false,
-				writable: true,
-				configurable: true
-			},
+			// constructor: {
+			// 	value: clsObj,
+			// 	enumerable: false,
+			// 	writable: true,
+			// 	configurable: true
+			// },
 			class_: {
 				value: clsObj
 			},
@@ -127,6 +127,8 @@ var entity = {
 			return 0;
 		},
 		add: function add (a, b) {
+			if (a === null && b === null)
+				return null;
 			return a + b;
 		},
 

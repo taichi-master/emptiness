@@ -15,6 +15,7 @@ var nature = {
 	},
 	proto: {
 		create: function create (value, attr) {
+// console.log(value);
 			var _private = {},
 				self = this,
 				prop = {},
@@ -32,14 +33,24 @@ var nature = {
 			structlistFactory.structFactory = structClassFactory;
 
 			Object.keys(value).forEach(function (key) {	// build structure on-the-fly based on data
+				var arr = key.split('|');
+				var k = arr[0].trim().toLowerCase().replace(/[\s-]/g, '_');
 				var v = value[key],
 					val =  v ? (Is.date(v) ? v : v.valueOf()) : (Is.undef(v) ? null : v),
-					enType = enTypes.getType(key);
+					enType = enTypes.getType(k);
+
+// console.log(val);
+// console.log(key);
 
 				if (Is.undef(enType))
-					enTypes.push( enType = typedef(val, key) );
+					enTypes.push( enType = typedef(val, k) );
 
-				_private[key] = enType(val, attr);
+// console.log(enType.class_.links);
+				_private[k] = enType(val, attr);
+// console.log(enType.class_.links);
+				
+				_private[k].title = arr[1] ? arr[1].trim() : arr[0];
+				_private[k].desciption = arr.length > 2 ? arr[2].trim() : '';
 			});
 
 			structlistFactory.structFactory = structFactory;
@@ -49,6 +60,7 @@ var nature = {
 			enTypes.value.forEach(function (enType) {	// set structure properties
 				var key = enType.alias();
 				if (Is.undef(_private[key])){
+					// console.log(key);
 					_private[key] = enType();
 				}
 				prop[key] = {
@@ -56,6 +68,8 @@ var nature = {
 						return _private[key];
 					}
 				}
+				prop[key].title = _private[key].title;
+				prop[key].description = _private[key].description;
 				// if (!Is.undef(_private[key])){
 				// 	prop[key] = {
 				// 		get: function () {

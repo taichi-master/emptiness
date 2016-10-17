@@ -29,10 +29,21 @@ function summarize (lst) {
 	var sum;
 	for (var i=0, len=lst.length; i < len; i++) {
 		if (lst[i]) {
-			if (sum)
-				sum.value = sum.add(lst[i]);
-			else
-				sum = lst[i].class_.create(lst[i].value, lst[i].attr());
+			if (lst[i].instanceOf('Field')) {
+				debugger;
+				if (sum)
+					sum.value = sum.add(lst[i]);
+				else  {
+					sum = lst[i].entity.class_.create(lst[i].value, lst[i].attr());
+				}
+			} else {
+				if (sum)
+					sum.value = sum.add(lst[i]);
+				else {
+					// console.log(lst[i].class_.links);
+					sum = lst[i].class_.create(lst[i].value, lst[i].attr());
+				}
+			}
 		}
 	}
 	return sum;

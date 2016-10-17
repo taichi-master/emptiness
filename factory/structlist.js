@@ -47,9 +47,13 @@ var nature = {
 			// groups
 			if (class_.enType) {
 				if (class_.enType.class_.enTypes) {	// set summary properties for struct
+
+			// console.log(class_.enType.class_.links);
+
 					var grpObj;
 					obj.groups = {};
 					class_.enType.class_.enTypes.value.forEach(function (enType) {
+			// console.log(enType.class_.links);
 						var key = enType.alias();
 						obj.groups[key] = grpObj = grp(obj.value, key);
 						if (enType.IsTypeOf('structlist') && enType.class_.enType.IsTypeOf('struct')) {
@@ -89,6 +93,18 @@ var nature = {
 			}
 			return class_;
 		},
+		// valueOf: function valueOf (value, attr) {
+		// 	var sb = [],
+		// 		List = this;
+		// 	value.forEach(function (obj) {
+		// 		// sb.push(Array.isArray(obj) ? List.valueOf(obj) :
+		// 		// 							 (obj ? obj.valueOf() : obj));
+		// 		console.log(List.links);
+		// 	debugger;
+		// 		sb.push(obj ? obj.valueOf() : obj);
+		// 	});
+		// 	return sb;
+		// },		
 		objProto: {
 			push: function push (val) {
 				this.value = this.value;

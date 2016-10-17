@@ -34,7 +34,15 @@ var nature = {
 					attr = {symbol: attr};
 					break;
 			}
-			return this.classOf(className).super_.create.call(this, value, deepMixIn({rounding: 2, symbol: '', thousand: ',', decimal: '.'}, attr));
+			// var attr2 = {};
+			// attr2.__proto__ = attr;
+			var attr2 = Object.create(attr);
+			typeof attr.rounding === 'undefined' && (attr2.rounding = 2);
+			typeof attr.symbol === 'undefined' && (attr2.symbol = '');
+			typeof attr.thousand === 'undefined' && (attr2.thousand = ',');
+			typeof attr.decimal === 'undefined' && (attr2.decimal = '.');
+			return this.classOf(className).super_.create.call(this, value, attr2);
+			// return this.classOf(className).super_.create.call(this, value, deepMixIn({rounding: 2, symbol: '', thousand: ',', decimal: '.'}, attr));
 		},
 		parse: function parse (str, attr) {
 			return this.classOf(className).super_.parse(str.replace(new RegExp('[^0-9-' + attr.decimal + ']', 'g'), ''), attr);
